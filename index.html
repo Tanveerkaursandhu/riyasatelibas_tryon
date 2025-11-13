@@ -17,32 +17,24 @@
 </body>
 </html> -->
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Riyasat-e-Libas — TryOn (Segmentation + Pose)</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RIYASAT-E-LIBAS TRY-ON</title>
   <link rel="stylesheet" href="style.css" />
-  <!-- TensorFlow.js and models -->
-  <script defer src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.12.0/dist/tf.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix"></script>
-  <script defer src="script.js"></script>
 </head>
 <body>
-  <div id="ui">
-    <div id="brand">RIYASAT-E-LIBAS</div>
-    <div id="msg">Tap/click anywhere to start — step into the frame</div>
-  </div>
+  <h1 class="brand">RIYASAT-E-LIBAS</h1>
+  <p class="instructions">Click to enable camera & align yourself 👗</p>
 
-  <!-- video (camera) -->
-  <video id="video" playsinline autoplay muted></video>
-
-  <!-- outfit overlay -->
+  <video id="camera" autoplay playsinline></video>
   <img id="outfit" src="outfit.png" alt="Outfit" />
 
-  <!-- offscreen canvas for mask generation -->
-  <canvas id="maskCanvas" width="512" height="512" style="display:none"></canvas>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.14.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection/dist/movenet.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>

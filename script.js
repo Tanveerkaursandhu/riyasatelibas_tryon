@@ -53,8 +53,7 @@ async function detectPose() {
     const shoulderWidth = Math.abs(rightShoulder.x - leftShoulder.x);
 
     // Scale outfit to match shoulder width
-    const scale = shoulderWidth / 250; // Adjust 250 for your outfit proportion
-
+    const scale = shoulderWidth / 180;
     // Smooth and show
     outfit.style.opacity = "1";
     outfit.style.transition = "transform 0.15s linear";

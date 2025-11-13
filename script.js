@@ -1,67 +1,81 @@
-import * as posedetection from "https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection";
-import "@tensorflow/tfjs-backend-webgl";
-
+// ==== Select elements ====
 const video = document.getElementById("camera");
 const outfit = document.getElementById("outfit");
 
-// Start camera
-async function startCamera() {
-  const stream = await navigator.mediaDevices.getUserMedia({
-    video: { facingMode: "user" },
-  });
-  video.srcObject = stream;
-  await video.play();
+// ==== Load TensorFlow.js + MoveNet ====
+let detector;
+
+async function loadPoseDetection() {
+  try {
+    detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, {
+      modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
+    });
+    console.log("✅ MoveNet loaded");
+  } catch (error) {
+    console.error("❌ Error loading MoveNet:", error);
+  }
 }
 
-// Setup pose detection
-async function initPose() {
-  const detector = await posedetection.createDetector(
-    posedetection.SupportedModels.MoveNet,
-    { modelType: posedetection.movenet.modelType.SINGLEPOSE_LIGHTNING }
-  );
+// ==== Start camera ====
+async function startCamera() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "user" }, // use "environment" for back camera on phone
+    });
+    video.srcObject = stream;
+    await video.play();
+    console.log("📸 Camera started");
+  } catch (error) {
+    console.error("Camera error:", error);
+    alert("Please allow camera access and reload.");
+  }
+}
 
-  async function detectPose() {
+// ==== Detect and track ====
+async function detectPose() {
+  if (!detector) return;
+
+  try {
     const poses = await detector.estimatePoses(video);
     if (poses.length > 0) {
       const keypoints = poses[0].keypoints;
-      const leftShoulder = keypoints[5];
-      const rightShoulder = keypoints[6];
-      const leftHip = keypoints[11];
-      const rightHip = keypoints[12];
 
-      // Only update if confidence is high enough
-      if (
-        leftShoulder.score > 0.4 &&
-        rightShoulder.score > 0.4 &&
-        leftHip.score > 0.4 &&
-        rightHip.score > 0.4
-      ) {
+      // Neck/shoulder anchor point (average of shoulders)
+      const leftShoulder = keypoints.find(k => k.name === "left_shoulder");
+      const rightShoulder = keypoints.find(k => k.name === "right_shoulder");
+
+      if (leftShoulder && rightShoulder && leftShoulder.score > 0.4 && rightShoulder.score > 0.4) {
         const centerX = (leftShoulder.x + rightShoulder.x) / 2;
-        const centerY = (leftShoulder.y + leftHip.y) / 2;
+        const centerY = (leftShoulder.y + rightShoulder.y) / 2 - 40; // Adjust vertical placement
 
-        const shoulderWidth = Math.abs(rightShoulder.x - leftShoulder.x);
-        const torsoHeight = Math.abs(leftHip.y - leftShoulder.y);
-
-        // Resize and position outfit dynamically
-        outfit.style.left = `${centerX}px`;
-        outfit.style.top = `${centerY - torsoHeight / 2}px`;
-        outfit.style.width = `${shoulderWidth * 2.2}px`;
-        outfit.style.height = `${torsoHeight * 1.6}px`;
-        outfit.style.transform = "translate(-50%, -50%)";
+        // Smooth movement
+        outfit.style.transition = "transform 0.15s linear";
+        outfit.style.transform = `translate(-50%, -50%) translate(${centerX}px, ${centerY}px)`;
       }
     }
-    requestAnimationFrame(detectPose);
+  } catch (error) {
+    console.error("Pose detection error:", error);
   }
 
-  detectPose();
+  requestAnimationFrame(detectPose);
 }
 
-// Wait for user click
-document.body.addEventListener(
-  "click",
-  async () => {
-    await startCamera();
-    await initPose();
-  },
-  { once: true }
-);
+// ==== Initialize ====
+(async () => {
+  await startCamera();
+
+  // Load TensorFlow.js library dynamically
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.21.0/dist/tf.min.js";
+  script.onload = async () => {
+    const poseScript = document.createElement("script");
+    poseScript.src = "https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection";
+    poseScript.onload = async () => {
+      await loadPoseDetection();
+      detectPose();
+    };
+    document.body.appendChild(poseScript);
+  };
+  document.body.appendChild(script);
+})();
+

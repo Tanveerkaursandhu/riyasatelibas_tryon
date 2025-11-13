@@ -1,18 +1,18 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Riyasat-e-Libas Try-On</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Riyasat-e-Libas — Virtual Try-On</title>
   <link rel="stylesheet" href="style.css" />
- <script defer src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.21.0/dist/tf.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface"></script>
-
-  <script defer src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.12.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
 </head>
 <body>
-  <p class="instructions">Step into your dream outfit 💃</p>
-  <video id="camera" autoplay playsinline></video>
-  <img id="outfit" src="https://comfy-treacle-70bbdd.netlify.app/outfit.png" alt="Outfit" />
+  <div class="header">RIYASAT-E-LIBAS</div>
+  <div class="instructions">Tap anywhere to start camera ✨</div>
+  <video id="camera" autoplay playsinline muted></video>
+  <img id="outfit" src="outfit.png" alt="Outfit" />
+  <script src="script.js"></script>
 </body>
 </html>

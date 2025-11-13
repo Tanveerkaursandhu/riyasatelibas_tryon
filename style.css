@@ -1,0 +1,72 @@
+
+/* Basic styles for the AR try-on page */
+html,body{
+  height:100%;
+  margin:0;
+  background:#000;
+  font-family: Arial, Helvetica, sans-serif;
+  overflow:hidden;
+}
+#video{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  transform: scaleX(-1); /* mirror so it feels like a camera mirror */
+}
+#overlay-ui{
+  position:fixed;
+  top:12px;
+  left:0;
+  right:0;
+  pointer-events:none;
+  text-align:center;
+  z-index:30;
+}
+#brand{
+  font-weight:700;
+  font-size:20px;
+  color:white;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  background: rgba(0,0,0,0.25);
+  display:inline-block;
+  padding:6px 14px;
+  border-radius:6px;
+  pointer-events:none;
+  opacity:0;
+  animation: fadeInOut 1.6s ease forwards;
+}
+#instructions{
+  margin-top:8px;
+  color:#fff;
+  font-size:14px;
+  background: rgba(0,0,0,0.35);
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:6px;
+  pointer-events:none;
+  opacity:0.95;
+}
+
+/* outfit image */
+#outfit{
+  position:fixed;
+  left:50%;
+  top:50%;
+  transform-origin: 50% 50%;
+  z-index:20;
+  pointer-events:none;
+  will-change: transform, width, height;
+  /* start invisible until we get first pose */
+  opacity:0;
+}
+
+/* fade-in animation for brand name */
+@keyframes fadeInOut {
+  0%{ opacity:0; transform: translateY(-10px); }
+  20%{ opacity:1; transform: translateY(0px); }
+  80%{ opacity:1; transform: translateY(0px); }
+  100%{ opacity:0; transform: translateY(-10px); }
+}

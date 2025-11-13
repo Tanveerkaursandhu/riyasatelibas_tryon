@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>RIYASAT-E-LIBAS — Try On</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- TensorFlow.js -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.12.0/dist/tf.min.js"></script>
+  <!-- MoveNet via TF.js pose-detection -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection@0.1.3/dist/pose-detection.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection@0.1.3/dist/movenet.min.js"></script>
+</head>
+<body>
+  <div id="overlay-ui">
+    <div id="brand">RIYASAT-E-LIBAS</div>
+    <div id="instructions">Allow camera access to try the outfit in AR. Stand back so your full body fits the camera.</div>
+  </div>
+
+  <video id="video" playsinline autoplay muted></video>
+  <!-- The outfit image that will be transformed to match the user's body -->
+  <img id="outfit" src="assets/outfit.png" alt="Outfit" />
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -144,9 +144,13 @@ async function renderLoop() {
       const centerX = (leftShoulder.x + rightShoulder.x) / 2;
       const centerY = (leftShoulder.y + rightShoulder.y) / 2;
 
+      // Adjust height & vertical offset
+      const scaleFactor = 3.8; // increase for full-length coverage
+      const verticalShift = 1.2; // move outfit downward (1.0 = shoulder, 1.3 = chest level)
+
       outfit.style.left = `${(centerX / videoWidth) * 100}%`;
-      outfit.style.bottom = `${100 - (centerY / videoHeight) * 100}%`;
-      outfit.style.height = `${shoulderWidth * 3}px`;
+      outfit.style.bottom = `${100 - ((centerY * verticalShift) / videoHeight) * 100}%`;
+      outfit.style.height = `${shoulderWidth * scaleFactor}px`;
       outfit.style.transform = "translateX(-50%)";
       outfit.style.display = "block";
     }

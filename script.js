@@ -44,23 +44,32 @@ async function detectPose() {
       const leftShoulder = keypoints.find(k => k.name === "left_shoulder");
       const rightShoulder = keypoints.find(k => k.name === "right_shoulder");
 
-    if (leftShoulder && rightShoulder) {
-  if (leftShoulder.score > 0.2 && rightShoulder.score > 0.2) {
+   if (leftShoulder && rightShoulder) {
+  if (leftShoulder.score > 0.3 && rightShoulder.score > 0.3) {
     const centerX = (leftShoulder.x + rightShoulder.x) / 2;
-    const centerY = (leftShoulder.y + rightShoulder.y) / 2 - 40;
+    const centerY = (leftShoulder.y + rightShoulder.y) / 2;
 
-    outfit.style.opacity = "1"; // Show once detected
-    outfit.style.transition = "transform 0.1s linear";
-    outfit.style.transform = `translate(-50%, -50%) translate(${centerX}px, ${centerY}px)`;
-  } else {
-    // keep visible even if weak detection
-    outfit.style.opacity = "0.8";
+    // Width between shoulders = scale reference
+    const shoulderWidth = Math.abs(rightShoulder.x - leftShoulder.x);
+
+    // Scale outfit to match shoulder width
+    const scale = shoulderWidth / 250; // Adjust 250 for your outfit proportion
+
+    // Smooth and show
+    outfit.style.opacity = "1";
+    outfit.style.transition = "transform 0.15s linear";
+    outfit.style.transform = `
+      translate(-50%, -50%)
+      translate(${centerX}px, ${centerY + 80}px)
+      scale(${scale})
+    `;
   }
 } else {
-  // fallback position (center screen)
+  // fallback center
   outfit.style.opacity = "1";
-  outfit.style.transform = "translate(-50%, -50%) translate(50vw, 50vh)";
+  outfit.style.transform = "translate(-50%, -50%) translate(50vw, 50vh) scale(1)";
 }
+
     }
   } catch (error) {
     console.error("Pose detection error:", error);

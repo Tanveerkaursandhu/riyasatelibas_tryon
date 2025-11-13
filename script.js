@@ -1,40 +1,47 @@
 const video = document.getElementById('camera');
 const outfit = document.getElementById('outfit');
-const text = document.querySelector('.instructions');
+const info = document.querySelector('.instructions');
+let detector;
 
+// start camera
 async function initCamera() {
-  const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+  const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
   video.srcObject = stream;
-  return new Promise((resolve) => (video.onloadedmetadata = resolve));
+  await new Promise(r => video.onloadedmetadata = r);
 }
 
-async function main() {
-  await initCamera();
-  const model = await blazeface.load();
-  detectFace(model);
+// create pose detector
+async function loadModel() {
+  const model = poseDetection.SupportedModels.MoveNet;
+  detector = await poseDetection.createDetector(model, {
+    modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING
+  });
 }
 
-async function detectFace(model) {
-  const interval = 100;
-  setInterval(async () => {
-    const predictions = await model.estimateFaces(video, false);
-    if (predictions.length > 0) {
-      const face = predictions[0];
-      const [x1, y1] = face.topLeft;
-      const [x2, y2] = face.bottomRight;
-      const faceCenterX = (x1 + x2) / 2;
-      const faceCenterY = (y1 + y2) / 2;
-      const faceHeight = y2 - y1;
-
+async function detectPose() {
+  const poses = await detector.estimatePoses(video, { flipHorizontal: true });
+  if (poses.length > 0) {
+    const left = poses[0].keypoints.find(k => k.name === 'left_shoulder');
+    const right = poses[0].keypoints.find(k => k.name === 'right_shoulder');
+    if (left.score > 0.5 && right.score > 0.5) {
+      const centerX = (left.x + right.x) / 2;
+      const centerY = (left.y + right.y) / 2;
+      const width = Math.abs(right.x - left.x) * 3;
+      outfit.style.left = `${centerX}px`;
+      outfit.style.top = `${centerY}px`;
+      outfit.style.height = `${width}px`;
       outfit.style.opacity = 1;
-      text.style.opacity = 0;
-      outfit.style.top = `${faceCenterY + faceHeight * 0.5}px`;
-      outfit.style.transform = `translateX(-50%) scale(${1 + faceHeight / 400})`;
-    } else {
-      outfit.style.opacity = 0;
-      text.style.opacity = 1;
     }
-  }, interval);
+  }
+  requestAnimationFrame(detectPose);
 }
 
-main();
+document.body.addEventListener('click', async () => {
+  info.textContent = 'Loading camera...';
+  await initCamera();
+  info.textContent = 'Loading model...';
+  await loadModel();
+  info.textContent = 'Align with outfit 👗';
+  detectPose();
+}, { once: true });
+

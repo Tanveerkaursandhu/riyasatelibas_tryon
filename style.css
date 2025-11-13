@@ -43,9 +43,13 @@ html, body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  height: 80vh;
-  opacity: 1;
+  transform-origin: top center;
+  height: auto;
+  width: auto;
+  max-height: 90vh;
+  opacity: 0.95;
   z-index: 2;
   pointer-events: none;
 }
+
 

@@ -40,10 +40,12 @@ html, body {
 
 #outfit {
   position: absolute;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
-  opacity: 0;
-  height: 75vh;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  opacity: 1;
   z-index: 2;
-  transition: transform 0.15s, opacity 0.2s;
+  pointer-events: none;
 }
+
